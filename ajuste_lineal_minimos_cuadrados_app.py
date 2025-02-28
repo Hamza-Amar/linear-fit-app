@@ -13,7 +13,7 @@ def plot_linear_fit(x, y, x_err, y_err, slope, intercept, slope_err, intercept_e
     
     x_fit = np.linspace(min(x) - 1, max(x) + 1, 100)
     y_fit = slope * x_fit + intercept
-    ax.plot(x_fit, y_fit, color='crimson', linewidth=2, linestyle='-', label=f'Fit: $y={slope:.5f}x + {intercept:.5f}$')
+    ax.plot(x_fit, y_fit, color='crimson', linewidth=2, linestyle='-', label=f'Fit: $y={slope:.{slope_res}f}x + {intercept:.{intercept_res}f}$')
     
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
