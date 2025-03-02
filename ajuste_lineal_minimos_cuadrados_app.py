@@ -1,10 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import streamlit as st
-from scipy.stats import linregress
+from scipy.optimize import curve_fit
 
-def linear_fit(x, y):
-    slope, intercept, r_value, slope_err, intercept_err = linregress(x, y)[:5]
+def linear_model(x, m, b):
+    return m * x + b
+
+def linear_fit(x, y, y_err):
+    popt, pcov = curve_fit(linear_model, x, y, sigma=y_err, absolute_sigma=True)
+    slope, intercept = popt
+    slope_err, intercept_err = np.sqrt(np.diag(pcov))
+    r_value = np.corrcoef(x, y)[0, 1]
     return slope, intercept, slope_err, intercept_err, r_value
 
 def plot_linear_fit(x, y, x_err, y_err, slope, intercept, slope_err, intercept_err, r_value, slope_res, intercept_res, x_label="Eje X", y_label="Eje Y", title="Ajuste lineal con barras de error"):
@@ -39,17 +45,12 @@ if __name__ == "__main__":
     intercept_res = st.number_input("Número de decimales para la ordenada al origen", 0, 10, 1)
     x_label = st.text_input("Etiqueta del eje X", "m (g)")
     y_label = st.text_input("Etiqueta del eje Y", "$\Delta y$ (cm)")
-    title = st.text_input("Título del gráfico", "Ley de Hooke")
     
-    if st.button("Ejecutar regresión lineal"):
-        try:
-            x_data = np.array([float(i) for i in x_values.split(',')])
-            y_data = np.array([float(i) for i in y_values.split(',')])
-            x_err = np.array([float(i) for i in x_errors.split(',')])
-            y_err = np.array([float(i) for i in y_errors.split(',')])
-    
-            slope, intercept, slope_err, intercept_err, r_value = linear_fit(x_data, y_data)
-            plot_linear_fit(x_data, y_data, x_err, y_err, slope, intercept, slope_err, intercept_err, r_value, slope_res, intercept_res, x_label, y_label, title)
-        except Exception as e:
-            st.error(f"Error processing input: {e}")
-    
+    if st.button("Calcular ajuste"):
+        x = np.array([float(i) for i in x_values.split(',')])
+        y = np.array([float(i) for i in y_values.split(',')])
+        x_err = np.array([float(i) for i in x_errors.split(',')])
+        y_err = np.array([float(i) for i in y_errors.split(',')])
+        
+        slope, intercept, slope_err, intercept_err, r_value = linear_fit(x, y, y_err)
+        plot_linear_fit(x, y, x_err, y_err, slope, intercept, slope_err, intercept_err, r_value, slope_res, intercept_res, x_label, y_label)
