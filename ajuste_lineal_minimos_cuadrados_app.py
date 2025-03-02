@@ -45,6 +45,7 @@ if __name__ == "__main__":
     intercept_res = st.number_input("Número de decimales para la ordenada al origen", 0, 10, 1)
     x_label = st.text_input("Etiqueta del eje X", "m (g)")
     y_label = st.text_input("Etiqueta del eje Y", "$\Delta y$ (cm)")
+    title = st.text_input("Título del gráfico", "Ley de Hooke")
     
     if st.button("Calcular ajuste"):
         x = np.array([float(i) for i in x_values.split(',')])
@@ -53,4 +54,4 @@ if __name__ == "__main__":
         y_err = np.array([float(i) for i in y_errors.split(',')])
         
         slope, intercept, slope_err, intercept_err, r_value = linear_fit(x, y, y_err)
-        plot_linear_fit(x, y, x_err, y_err, slope, intercept, slope_err, intercept_err, r_value, slope_res, intercept_res, x_label, y_label)
+        plot_linear_fit(x, y, x_err, y_err, slope, intercept, slope_err, intercept_err, r_value, slope_res, intercept_res, x_label, y_label, title)
